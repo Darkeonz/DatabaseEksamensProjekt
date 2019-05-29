@@ -43,6 +43,19 @@ namespace DatabaseProjekt.Database
                 IEnumerable<bool> titleResults = File.ReadAllLines(@bookPath).Select(s => s.Contains("Title:"));
                 string author = FindAuthor(authorResults, bookPath);
                 string title = FindTitle(titleResults, bookPath);
+
+                string book = File.ReadAllText(@bookPath);
+                List<string> townList = GetTownList();
+                foreach (var town in townList)
+                {
+                    bool matchingvalues = book.Contains(town);
+                    if (matchingvalues)
+                    {
+                        string value = town;
+                    }
+                }
+                
+               
             }
             
         }
@@ -64,7 +77,7 @@ namespace DatabaseProjekt.Database
             return "No author found";
         }
 
-        //finder title for  en bog
+        //finder title for en bog
         public string FindTitle(IEnumerable<bool> titleResults, string bookPath)
         {
             string[] book = File.ReadAllLines(@bookPath);
