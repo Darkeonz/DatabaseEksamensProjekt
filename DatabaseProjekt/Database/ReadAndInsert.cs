@@ -50,15 +50,22 @@ namespace DatabaseProjekt.Database
             string[] bookPaths = GetFilePaths();
             foreach (var bookPath in bookPaths)
             {             
+                // Tager 1 sekund for 100 bøger
                 IEnumerable<bool> authorResults = File.ReadAllLines(@bookPath).Select(s => s.Contains("Author:"));
                 IEnumerable<bool> titleResults = File.ReadAllLines(@bookPath).Select(s => s.Contains("Title:"));
                 string author = FindAuthor(authorResults, bookPath);
                 string title = FindTitle(titleResults, bookPath);
 
+                // tager 2 sekunder for 100 bøger
                 string book = File.ReadAllText(@bookPath);
                 // splitter bogen op i sætninger. Sætninger med et bynavn tages ud og køre igennem Stanford Named Entity Recognizer (NER) for .NET for at bedømme om det er en by eller ej.
                 // Dette gøres fordi NER er ret tungt at køre på hele bogen. Så med et stort datasæt vil det tage alt for langt tid.
-                List<string> listOfPotentialTownSentences = FindTownsInTxt(GetPotentialTownSentences(book));
+
+                // Tager 2 minutter for 100 bøger
+                List<string> listOfPotentialSentences = GetPotentialTownSentences(book);
+
+                // Tager 2 sekunder for 100 bøger for begge metoder
+                List<string> listOfPotentialTownSentences = FindTownsInTxt(listOfPotentialSentences);
                 List<string> listOfTowns = GetListOfTowns(listOfPotentialTownSentences);
 
 
@@ -113,6 +120,8 @@ namespace DatabaseProjekt.Database
         }
 
         public List<string> GetPotentialTownSentences(string book) {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
             List<string> sentences = Regex.Split(book, @"(?<=[\.!\?])\s+").ToList();
             List<string> sentenceListOfPossibleTowns = new List<string>();
@@ -125,12 +134,13 @@ namespace DatabaseProjekt.Database
                     bool matchingvalues = sentence.Contains(town);
                     if (matchingvalues)
                     {
-                        sentenceListOfPossibleTowns.Add(sentence);
-                        string value = town;
+                        sentenceListOfPossibleTowns.Add(sentence);                       
                     }
                 }
 
             }
+            sw.Stop();
+            TimeSpan elapsedTime = sw.Elapsed;
             return sentenceListOfPossibleTowns;
         }
 
