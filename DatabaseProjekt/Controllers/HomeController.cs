@@ -13,7 +13,7 @@ namespace DatabaseProjekt.Controllers
         public ActionResult Index()
         {
             ReadAndInsert readfile = new ReadAndInsert();
-            readfile.ReadAllBooks();
+            readfile.HarvestDataFromBooks();
             readfile.GetTownList();
             return View();
         }
