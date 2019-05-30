@@ -58,7 +58,7 @@ namespace DatabaseProjekt.Database
 
 
             }
-            
+            string testtimer = "test";
         }
 
         //Finder author for en bog
