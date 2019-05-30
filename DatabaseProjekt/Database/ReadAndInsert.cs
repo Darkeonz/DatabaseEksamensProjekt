@@ -6,8 +6,7 @@ using System.IO;
 using System.Data.OleDb;
 using System.Text.RegularExpressions;
 using edu.stanford.nlp.ie.crf;
-
-
+using System.Diagnostics;
 
 namespace DatabaseProjekt.Database
 {
@@ -41,7 +40,13 @@ namespace DatabaseProjekt.Database
             }
         }
 
-        public void HarvestDataFromBooks() {            
+        public void HarvestDataFromBooks() {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            // your code here
+
+            
             string[] bookPaths = GetFilePaths();
             foreach (var bookPath in bookPaths)
             {             
@@ -58,7 +63,8 @@ namespace DatabaseProjekt.Database
 
 
             }
-            string testtimer = "test";
+            sw.Stop();
+            TimeSpan elapsedTime = sw.Elapsed;
         }
 
         //Finder author for en bog
