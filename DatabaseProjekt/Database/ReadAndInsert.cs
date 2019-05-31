@@ -17,13 +17,17 @@ namespace DatabaseProjekt.Database
           CRFClassifier.getClassifierNoExceptions(
             @"C:\Temp\stanford-ner-2016-10-31\classifiers\english.all.3class.distsim.crf.ser.gz");
 
+
+
         //danner en liste af stierne til byerne.
-        public string[] GetFilePaths() {
+        public string[] GetFilePaths()
+        {
             return Directory.GetFiles(@"E:\Skoleprojekter\testdata\testbooks");
         }
 
         //Henter alle engelske bynavne ind og lægger dem i en liste.
-        public List<string> GetTownList() {
+        public List<string> GetTownList()
+        {
 
             using (var reader = new StreamReader(@"E:\Skoleprojekter\testdata\testtowns\towns.csv"))
             {
@@ -34,22 +38,23 @@ namespace DatabaseProjekt.Database
                     var line = reader.ReadLine();
                     var values = line.Split('"');
 
-                    listA.Add(values[3]);                   
+                    listA.Add(values[3]);
                 }
                 return listA;
             }
         }
 
-        public void HarvestDataFromBooks() {
+        public void HarvestDataFromBooks()
+        {
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            // your code here
+            List<string> townList = GetTownList();
 
-            
+
             string[] bookPaths = GetFilePaths();
             foreach (var bookPath in bookPaths)
-            {             
+            {
                 // Tager 1 sekund for 100 bøger
                 IEnumerable<bool> authorResults = File.ReadAllLines(@bookPath).Select(s => s.Contains("Author:"));
                 IEnumerable<bool> titleResults = File.ReadAllLines(@bookPath).Select(s => s.Contains("Title:"));
@@ -62,7 +67,7 @@ namespace DatabaseProjekt.Database
                 // Dette gøres fordi NER er ret tungt at køre på hele bogen. Så med et stort datasæt vil det tage alt for langt tid.
 
                 // Tager 2 minutter for 100 bøger
-                List<string> listOfPotentialSentences = GetPotentialTownSentences(book);
+                List<string> listOfPotentialSentences = GetPotentialTownSentences(book, townList);
 
                 // Tager 2 sekunder for 100 bøger for begge metoder
                 List<string> listOfPotentialTownSentences = FindTownsInTxt(listOfPotentialSentences);
@@ -84,7 +89,7 @@ namespace DatabaseProjekt.Database
                 if (authorResult)
                 {
                     string authorLineResult = book[authorLineNumber];
-                    return authorLineResult.Substring(authorLineResult.IndexOf("Author: ") + "Author: ".Length);                                      
+                    return authorLineResult.Substring(authorLineResult.IndexOf("Author: ") + "Author: ".Length);
                 }
                 authorLineNumber = authorLineNumber + 1;
             }
@@ -101,32 +106,36 @@ namespace DatabaseProjekt.Database
                 if (titleResult)
                 {
                     string authorLineResult = book[titleLineNumber];
-                    return authorLineResult.Substring(authorLineResult.IndexOf("Title: ") + "Title: ".Length);                   
+                    return authorLineResult.Substring(authorLineResult.IndexOf("Title: ") + "Title: ".Length);
                 }
                 titleLineNumber = titleLineNumber + 1;
             }
             return "No title found";
         }
 
-        public List<string> FindTownsInTxt(List<string> sentences) {
+        public List<string> FindTownsInTxt(List<string> sentences)
+        {
 
             List<string> result = new List<string>();
             foreach (var sentence in sentences)
             {
                 result.Add(Classifier.classifyToString(sentence));
+                
             }
 
             return result;
         }
 
-        public List<string> GetPotentialTownSentences(string book) {
+
+        //Optimize method
+        public List<string> GetPotentialTownSentences(string book, List<string> townList)
+        {
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
             List<string> sentences = Regex.Split(book, @"(?<=[\.!\?])\s+").ToList();
             List<string> sentenceListOfPossibleTowns = new List<string>();
 
-            List<string> townList = GetTownList();
             foreach (var town in townList)
             {
                 foreach (var sentence in sentences)
@@ -134,35 +143,75 @@ namespace DatabaseProjekt.Database
                     bool matchingvalues = sentence.Contains(town);
                     if (matchingvalues)
                     {
-                        sentenceListOfPossibleTowns.Add(sentence);                       
+                        sentenceListOfPossibleTowns.Add(sentence);
                     }
                 }
 
             }
             sw.Stop();
-            TimeSpan elapsedTime = sw.Elapsed;
             return sentenceListOfPossibleTowns;
         }
 
-        public List<string> GetListOfTowns(List<string> listOfPotentialTownSentences) {
+        public List<string> GetListOfTowns(List<string> listOfPotentialTownSentences)
+        {
+            bool isNextWordALocation = false;
+            string townName = string.Empty;
 
-            List<string> townsInBook = new List<string>(); 
-               foreach (var PotentialTownSentences in listOfPotentialTownSentences)
+            List<string> townsInBook = new List<string>();
+            foreach (var PotentialTownSentences in listOfPotentialTownSentences)
+            {
+                int i = 1;
+                string[] words = PotentialTownSentences.Split(' ');
+
+                foreach (var word in words)
                 {
-                    string[] words = PotentialTownSentences.Split(' ');
-                    foreach (var word in words)
+                    if (i < words.Length)
                     {
-                        if (word.EndsWith("/LOCATION"))
+                        isNextWordALocation = CheckIfNextWordIsLocation(words[i]);
+                    }
+
+                    i++;
+                    if (word.EndsWith("/LOCATION") && isNextWordALocation == false)
+                    {
+                        int index1 = word.IndexOf("/LOCATION");
+                        if (index1 != -1)
                         {
-                            int index1 = word.IndexOf("/LOCATION");
-                            if (index1 != -1)
+
+                            if (townName != "")
                             {
-                            townsInBook.Add(word.Remove(index1));
+                                townName = townName + " " + word.Remove(index1);
+                                townsInBook.Add(townName);
                             }
+                            else
+                            {
+                                townsInBook.Add(word.Remove(index1));
+                            }
+ 
+                        }
+                    }
+                    if (word.EndsWith("/LOCATION") && isNextWordALocation == true)
+                    {
+                        int index1 = word.IndexOf("/LOCATION");
+                        if (index1 != -1)
+                        {
+                            townName = townName + word.Remove(index1);
                         }
                     }
                 }
+            }
             return townsInBook;
+        }
+
+        public bool CheckIfNextWordIsLocation(string word)
+        {
+            if (word.EndsWith("/LOCATION"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }
