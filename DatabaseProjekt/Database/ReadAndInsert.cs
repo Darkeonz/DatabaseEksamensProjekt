@@ -26,13 +26,12 @@ namespace DatabaseProjekt.Database
         }
 
         //Henter alle engelske bynavne ind og lægger dem i en liste.
-        public List<string> GetTownList()
+        public string[] GetTownList()
         {
 
             using (var reader = new StreamReader(@"E:\Skoleprojekter\testdata\testtowns\towns.csv"))
             {
                 List<string> listA = new List<string>();
-                List<string> listB = new List<string>();
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
@@ -40,7 +39,7 @@ namespace DatabaseProjekt.Database
 
                     listA.Add(values[3]);
                 }
-                return listA;
+                return listA.ToArray();
             }
         }
 
@@ -49,7 +48,7 @@ namespace DatabaseProjekt.Database
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            List<string> townList = GetTownList();
+            string[] townList = GetTownList();
 
 
             string[] bookPaths = GetFilePaths();
@@ -63,10 +62,11 @@ namespace DatabaseProjekt.Database
 
                 // tager 2 sekunder for 100 bøger
                 string book = File.ReadAllText(@bookPath);
+
                 // splitter bogen op i sætninger. Sætninger med et bynavn tages ud og køre igennem Stanford Named Entity Recognizer (NER) for .NET for at bedømme om det er en by eller ej.
                 // Dette gøres fordi NER er ret tungt at køre på hele bogen. Så med et stort datasæt vil det tage alt for langt tid.
 
-                // Tager 2 minutter for 100 bøger
+                // Tager 0.30 minutter for 100 bøger
                 List<string> listOfPotentialSentences = GetPotentialTownSentences(book, townList);
 
                 // Tager 2 sekunder for 100 bøger for begge metoder
@@ -128,27 +128,20 @@ namespace DatabaseProjekt.Database
 
 
         //Optimize method
-        public List<string> GetPotentialTownSentences(string book, List<string> townList)
+        public List<string> GetPotentialTownSentences(string book, string[] townList)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
 
-            List<string> sentences = Regex.Split(book, @"(?<=[\.!\?])\s+").ToList();
-            List<string> sentenceListOfPossibleTowns = new List<string>();
+            string[] sentences = book.Split(new char[] { '.', '?', '!' });
+            
+            var sentenceQuery = from sentence in sentences.AsParallel()
+                                let words = sentence.Split(new char[] { '.', '?', '!', ' ', ';', ':', ',' },
+                                                        StringSplitOptions.RemoveEmptyEntries).Where(word => Char.IsUpper(word[0]))
+                                where words.Distinct().Intersect(townList).Any()
+                                select sentence;
 
-            foreach (var town in townList)
-            {
-                foreach (var sentence in sentences)
-                {
-                    bool matchingvalues = sentence.Contains(town);
-                    if (matchingvalues)
-                    {
-                        sentenceListOfPossibleTowns.Add(sentence);
-                    }
-                }
+            var sentenceListOfPossibleTowns = sentenceQuery.ToList();
+    
 
-            }
-            sw.Stop();
             return sentenceListOfPossibleTowns;
         }
 
