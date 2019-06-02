@@ -35,7 +35,7 @@ namespace DatabaseProjekt.Database
                 {
                     var line = reader.ReadLine();
                     var values = line.Split(';');
-                    var city = new City() { Name = values[0], Latitude = Convert.ToDouble(values[1]), Longitude = Convert.ToDouble(values[2]) };
+                    var city = new City() { Name = values[0], Latitude = Convert.ToDouble(values[1]), Longitude = Convert.ToDouble(values[2]), CityId = Convert.ToInt32(values[3]) };
                     listOfCities.Add(city);
                 }
                 return listOfCities;
@@ -47,6 +47,7 @@ namespace DatabaseProjekt.Database
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
+            int bookId = 0;
             var townList = GetTownList();
             var listOfBooks = new List<Book>();
             string[] bookPaths = GetFilePaths();
@@ -71,8 +72,9 @@ namespace DatabaseProjekt.Database
                 List<string> listOfPotentialTownSentences = FindTownsInTxt(listOfPotentialSentences);
                 List<string> listOfNERCities = GetListOfNERCities(listOfPotentialTownSentences);
                 var citiesInBook = FindCitiesInBook(listOfNERCities, townList);
-                var book = new Book() { Author = author, Title = title, Cities = citiesInBook };
+                var book = new Book() { BookId = bookId, Author = author, Title = title, Cities = citiesInBook };
                 listOfBooks.Add(book);
+                bookId++;
             }
 
             // tager 33 sekunder for 100 bøger at udføre alle handlinger
