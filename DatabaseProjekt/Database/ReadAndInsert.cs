@@ -114,12 +114,13 @@ namespace DatabaseProjekt.Database
         }
 
         public List<string> FindTownsInTxt(List<string> sentences)
-        {
-
+        {     
             List<string> result = new List<string>();
             foreach (var sentence in sentences)
             {
-                result.Add(Classifier.classifyToString(sentence));
+                string sentenceClean = sentence.Replace(Environment.NewLine, " ");
+                sentenceClean = sentenceClean.Replace(",", "").Replace(";", "").Replace(":", "");
+                result.Add(Classifier.classifyToString(Regex.Replace(sentenceClean, @"[^0-9A-Za-z ,]", "")));
                 
             }
 
@@ -152,7 +153,7 @@ namespace DatabaseProjekt.Database
 
             List<string> townsInBook = new List<string>();
             foreach (var PotentialTownSentences in listOfPotentialTownSentences)
-            {
+            {               
                 int i = 1;
                 string[] words = PotentialTownSentences.Split(' ');
 
@@ -174,10 +175,12 @@ namespace DatabaseProjekt.Database
                             {
                                 townName = townName + " " + word.Remove(index1);
                                 townsInBook.Add(townName);
+                                townName = string.Empty;
                             }
                             else
                             {
                                 townsInBook.Add(word.Remove(index1));
+                                townName = string.Empty;
                             }
  
                         }
