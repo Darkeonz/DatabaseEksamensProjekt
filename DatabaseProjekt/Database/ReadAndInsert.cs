@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.IO;
-using System.Data.OleDb;
 using System.Text.RegularExpressions;
 using edu.stanford.nlp.ie.crf;
 using System.Diagnostics;
@@ -65,7 +63,7 @@ namespace DatabaseProjekt.Database
 
                 // splitter bogen op i sætninger. Sætninger med et bynavn tages ud og køre igennem Stanford Named Entity Recognizer (NER) for .NET for at bedømme om det er en by eller ej.
                 // Dette gøres fordi NER er ret tungt at køre på hele bogen. Så med et stort datasæt vil det tage alt for langt tid.
-
+            
                 // Tager 0.30 minutter for 100 bøger
                 List<string> listOfPotentialSentences = GetPotentialTownSentences(book, townList);
 
@@ -119,7 +117,7 @@ namespace DatabaseProjekt.Database
             foreach (var sentence in sentences)
             {
                 string sentenceClean = sentence.Replace(Environment.NewLine, " ");
-                sentenceClean = sentenceClean.Replace(",", "").Replace(";", "").Replace(":", "");
+                sentenceClean = sentenceClean.Replace(",", " ").Replace(";", "").Replace(":", "");
                 result.Add(Classifier.classifyToString(Regex.Replace(sentenceClean, @"[^0-9A-Za-z ,]", "")));
                 
             }
@@ -190,7 +188,7 @@ namespace DatabaseProjekt.Database
                         int index1 = word.IndexOf("/LOCATION");
                         if (index1 != -1)
                         {
-                            townName = townName + word.Remove(index1);
+                            townName = townName + " " + word.Remove(index1);
                         }
                     }
                 }
