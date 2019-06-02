@@ -27,7 +27,7 @@ namespace DatabaseProjekt.Database
         //Henter alle engelske bynavne ind og lægger dem i en liste.
         public List<City> GetTownList()
         {
-            
+
             using (var reader = new StreamReader(@"E:\Skoleprojekter\testdata\testtowns\towns.csv"))
             {
                 List<City> listOfCities = new List<City>();
@@ -48,7 +48,7 @@ namespace DatabaseProjekt.Database
             sw.Start();
 
             var townList = GetTownList();
-
+            var listOfBooks = new List<Book>();
             string[] bookPaths = GetFilePaths();
             foreach (var bookPath in bookPaths)
             {
@@ -59,23 +59,41 @@ namespace DatabaseProjekt.Database
                 string title = FindTitle(titleResults, bookPath);
 
                 // tager 2 sekunder for 100 bøger
-                string book = File.ReadAllText(@bookPath);
+                string bookText = File.ReadAllText(@bookPath);
 
                 // splitter bogen op i sætninger. Sætninger med et bynavn tages ud og køre igennem Stanford Named Entity Recognizer (NER) for .NET for at bedømme om det er en by eller ej.
                 // Dette gøres fordi NER er ret tungt at køre på hele bogen. Så med et stort datasæt vil det tage alt for langt tid.
-            
+
                 // Tager 0.30 minutter for 100 bøger
-                List<string> listOfPotentialSentences = GetPotentialTownSentences(book, townList);
+                List<string> listOfPotentialSentences = GetPotentialTownSentences(bookText, townList);
 
                 // Tager 2 sekunder for 100 bøger for begge metoder
                 List<string> listOfPotentialTownSentences = FindTownsInTxt(listOfPotentialSentences);
-                List<string> listOfTowns = GetListOfTowns(listOfPotentialTownSentences);
-
-
+                List<string> listOfNERCities = GetListOfNERCities(listOfPotentialTownSentences);
+                var citiesInBook = FindCitiesInBook(listOfNERCities, townList);
+                var book = new Book() { Author = author, Title = title, Cities = citiesInBook };
+                listOfBooks.Add(book);
             }
+
+            // tager 33 sekunder for 100 bøger at udføre alle handlinger
             sw.Stop();
             TimeSpan elapsedTime = sw.Elapsed;
         }
+
+        private List<City> FindCitiesInBook(List<string> listOfNERCities, List<City> townList)
+        {
+            var listOfCitiesInBook = new List<City>();
+            foreach (var town in townList)
+            {
+                if (listOfNERCities.Contains(town.Name))
+                {
+                    listOfCitiesInBook.Add(town);
+                }
+            }
+            return listOfCitiesInBook;
+        }
+
+
 
         //Finder author for en bog
         public string FindAuthor(IEnumerable<bool> authorResults, string bookPath)
@@ -112,14 +130,14 @@ namespace DatabaseProjekt.Database
         }
 
         public List<string> FindTownsInTxt(List<string> sentences)
-        {     
+        {
             List<string> result = new List<string>();
             foreach (var sentence in sentences)
             {
                 string sentenceClean = sentence.Replace(Environment.NewLine, " ");
                 sentenceClean = sentenceClean.Replace(",", " ").Replace(";", "").Replace(":", "");
                 result.Add(Classifier.classifyToString(Regex.Replace(sentenceClean, @"[^0-9A-Za-z ,]", "")));
-                
+
             }
 
             return result;
@@ -129,9 +147,9 @@ namespace DatabaseProjekt.Database
         //Optimize method
         public List<string> GetPotentialTownSentences(string book, List<City> townList)
         {
-            
+
             string[] sentences = book.Split(new char[] { '.', '?', '!' });
-            
+
             var sentenceQuery = from sentence in sentences.AsParallel()
                                 let words = sentence.Split(new char[] { '.', '?', '!', ' ', ';', ':', ',' },
                                                         StringSplitOptions.RemoveEmptyEntries).Where(word => Char.IsUpper(word[0]))
@@ -139,19 +157,19 @@ namespace DatabaseProjekt.Database
                                 select sentence;
 
             var sentenceListOfPossibleTowns = sentenceQuery.ToList();
-    
+
 
             return sentenceListOfPossibleTowns;
         }
 
-        public List<string> GetListOfTowns(List<string> listOfPotentialTownSentences)
+        public List<string> GetListOfNERCities(List<string> listOfPotentialTownSentences)
         {
             bool isNextWordALocation = false;
             string townName = string.Empty;
 
             List<string> townsInBook = new List<string>();
             foreach (var PotentialTownSentences in listOfPotentialTownSentences)
-            {               
+            {
                 int i = 1;
                 string[] words = PotentialTownSentences.Split(' ');
 
@@ -180,7 +198,7 @@ namespace DatabaseProjekt.Database
                                 townsInBook.Add(word.Remove(index1));
                                 townName = string.Empty;
                             }
- 
+
                         }
                     }
                     if (word.EndsWith("/LOCATION") && isNextWordALocation == true)
