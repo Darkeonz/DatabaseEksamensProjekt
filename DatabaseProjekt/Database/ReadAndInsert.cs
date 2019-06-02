@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using edu.stanford.nlp.ie.crf;
 using System.Diagnostics;
+using DatabaseProjekt.Entities;
 
 namespace DatabaseProjekt.Database
 {
@@ -24,20 +25,20 @@ namespace DatabaseProjekt.Database
         }
 
         //Henter alle engelske bynavne ind og lægger dem i en liste.
-        public string[] GetTownList()
+        public List<City> GetTownList()
         {
-
+            
             using (var reader = new StreamReader(@"E:\Skoleprojekter\testdata\testtowns\towns.csv"))
             {
-                List<string> listA = new List<string>();
+                List<City> listOfCities = new List<City>();
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
-                    var values = line.Split('"');
-
-                    listA.Add(values[3]);
+                    var values = line.Split(';');
+                    var city = new City() { Name = values[0], Latitude = Convert.ToDouble(values[1]), Longitude = Convert.ToDouble(values[2]) };
+                    listOfCities.Add(city);
                 }
-                return listA.ToArray();
+                return listOfCities;
             }
         }
 
@@ -46,8 +47,7 @@ namespace DatabaseProjekt.Database
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            string[] townList = GetTownList();
-
+            var townList = GetTownList();
 
             string[] bookPaths = GetFilePaths();
             foreach (var bookPath in bookPaths)
@@ -127,15 +127,15 @@ namespace DatabaseProjekt.Database
 
 
         //Optimize method
-        public List<string> GetPotentialTownSentences(string book, string[] townList)
+        public List<string> GetPotentialTownSentences(string book, List<City> townList)
         {
-
+            
             string[] sentences = book.Split(new char[] { '.', '?', '!' });
             
             var sentenceQuery = from sentence in sentences.AsParallel()
                                 let words = sentence.Split(new char[] { '.', '?', '!', ' ', ';', ':', ',' },
                                                         StringSplitOptions.RemoveEmptyEntries).Where(word => Char.IsUpper(word[0]))
-                                where words.Distinct().Intersect(townList).Any()
+                                where words.Distinct().Intersect(townList.Select(t => t.Name).ToArray()).Any()
                                 select sentence;
 
             var sentenceListOfPossibleTowns = sentenceQuery.ToList();
