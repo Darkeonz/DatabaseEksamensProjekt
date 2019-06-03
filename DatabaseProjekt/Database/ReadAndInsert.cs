@@ -49,8 +49,11 @@ namespace DatabaseProjekt.Database
 
             DBHandler dbHandler = new DBHandler();
             int bookId = 1;
+
+            // Fetches the towns from the CSV file and inserts them into the MYSQL database
             var townList = GetTownList();
             dbHandler.BulkCitiesToMySQL(townList);
+
             var listOfBooks = new List<Book>();
             string[] bookPaths = GetFilePaths();
             foreach (var bookPath in bookPaths)
@@ -79,8 +82,8 @@ namespace DatabaseProjekt.Database
                 bookId++;
             }
            
-            dbHandler.BulkBooksToMySQL(listOfBooks);
-           
+            // Inserts the book into the MYSQL database
+            dbHandler.BulkBooksToMySQL(listOfBooks);    
             // tager 33 sekunder for 100 bøger at udføre alle handlinger
             sw.Stop();
             TimeSpan elapsedTime = sw.Elapsed;
