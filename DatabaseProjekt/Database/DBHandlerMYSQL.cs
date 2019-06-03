@@ -10,7 +10,7 @@ using System.Web;
 
 namespace DatabaseProjekt.Database
 {
-    public class DBHandler
+    public class DBHandlerMYSQL
     {
 
         public void BulkBooksToMySQL(List<Book> bookList)

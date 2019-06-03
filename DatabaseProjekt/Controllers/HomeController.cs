@@ -1,4 +1,5 @@
 ﻿using DatabaseProjekt.Database;
+using DatabaseProjekt.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,11 @@ namespace DatabaseProjekt.Controllers
         {
             //   ReadAndInsert readfile = new ReadAndInsert();
             //   readfile.HarvestDataFromBooks();   
-            DBHandler dBHandler = new DBHandler();
-            dBHandler.GetBooksXMilesFromGeolocation(5150850, -12574, 50000);
+            //  DBHandlerMYSQL dBHandler = new DBHandlerMYSQL();
+            //  dBHandler.GetBooksXMilesFromGeolocation(5150850, -12574, 50000);
+            DBHandlerMongo DbHandler = new DBHandlerMongo("Gutenberg");
+            DbHandler.InsertRecord("Cities", new City() { CityId = 1, Latitude = 25, Longitude = 35, Name = "London" });
+            
             return View();
         }
 
@@ -37,7 +41,7 @@ namespace DatabaseProjekt.Controllers
 
         public ActionResult GetData()
         {
-            DBHandler dBHandler = new DBHandler();
+            DBHandlerMYSQL dBHandler = new DBHandlerMYSQL();
             ViewBag.Message = "Your contact page.";
 
             return View();

@@ -47,7 +47,7 @@ namespace DatabaseProjekt.Database
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            DBHandler dbHandler = new DBHandler();
+            DBHandlerMYSQL dbHandler = new DBHandlerMYSQL();
             int bookId = 1;
 
             // Fetches the towns from the CSV file and inserts them into the MYSQL database

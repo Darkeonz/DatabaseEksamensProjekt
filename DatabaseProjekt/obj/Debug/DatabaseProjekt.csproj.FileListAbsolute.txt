@@ -168,3 +168,14 @@ C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\Dat
 C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\Google.Protobuf.xml
 C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\MySql.Data.xml
 C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\obj\Debug\DatabaseProjekt.csprojResolveAssemblyReference.cache
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\DnsClient.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\MongoDB.Bson.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\MongoDB.Driver.Core.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\MongoDB.Driver.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\System.Buffers.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\System.Runtime.InteropServices.RuntimeInformation.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\DnsClient.xml
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\MongoDB.Bson.xml
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\MongoDB.Driver.xml
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\MongoDB.Driver.Core.xml
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\System.Buffers.xml
