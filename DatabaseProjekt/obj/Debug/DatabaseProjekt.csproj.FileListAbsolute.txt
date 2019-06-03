@@ -162,3 +162,9 @@ C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\Dat
 C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\Microsoft.AI.Web.xml
 C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\obj\Debug\DatabaseProjekt.dll
 C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\obj\Debug\DatabaseProjekt.pdb
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\BouncyCastle.Crypto.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\Google.Protobuf.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\MySql.Data.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\Google.Protobuf.xml
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\bin\MySql.Data.xml
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt\obj\Debug\DatabaseProjekt.csprojResolveAssemblyReference.cache

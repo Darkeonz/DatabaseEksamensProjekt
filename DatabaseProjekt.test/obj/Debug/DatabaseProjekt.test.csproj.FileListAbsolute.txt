@@ -178,3 +178,9 @@ C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\Dat
 C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt.test\obj\Debug\DatabaseProjekt.test.csprojResolveAssemblyReference.cache
 C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt.test\obj\Debug\DatabaseProjekt.test.dll
 C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt.test\obj\Debug\DatabaseProjekt.test.pdb
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt.test\bin\Debug\DatabaseProjekt.test.dll.config
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt.test\bin\Debug\MySql.Data.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt.test\bin\Debug\Google.Protobuf.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt.test\bin\Debug\BouncyCastle.Crypto.dll
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt.test\bin\Debug\MySql.Data.xml
+C:\Users\Andre\Documents\visual studio 2017\Projects\DatabaseEksamensProjekt\DatabaseProjekt.test\bin\Debug\Google.Protobuf.xml

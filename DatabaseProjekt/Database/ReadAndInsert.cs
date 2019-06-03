@@ -47,8 +47,10 @@ namespace DatabaseProjekt.Database
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            int bookId = 0;
+            DBHandler dbHandler = new DBHandler();
+            int bookId = 1;
             var townList = GetTownList();
+            dbHandler.BulkCitiesToMySQL(townList);
             var listOfBooks = new List<Book>();
             string[] bookPaths = GetFilePaths();
             foreach (var bookPath in bookPaths)
@@ -76,7 +78,9 @@ namespace DatabaseProjekt.Database
                 listOfBooks.Add(book);
                 bookId++;
             }
-
+           
+            dbHandler.BulkBooksToMySQL(listOfBooks);
+           
             // tager 33 sekunder for 100 bøger at udføre alle handlinger
             sw.Stop();
             TimeSpan elapsedTime = sw.Elapsed;
