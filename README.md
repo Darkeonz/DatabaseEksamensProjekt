@@ -12,3 +12,5 @@ I had to remove the The Project Gutenberg Etext of Chromosome 12, by the Human G
 It took 3 hours and 14 minutes to harvest all the books and insert them into the databases.
 
 ![alt text](https://i.gyazo.com/67d69dbc39ef06e897dbc200a4860eae.png)
+
+Haversine formula for calculating distance
