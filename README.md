@@ -14,3 +14,5 @@ It took 3 hours and 14 minutes to harvest all the books and insert them into the
 ![alt text](https://i.gyazo.com/67d69dbc39ef06e897dbc200a4860eae.png)
 
 Haversine formula for calculating distance
+
+![alt text](https://i.gyazo.com/fe5cc61ee470af2c55fdcae9f9d60db9.png)
