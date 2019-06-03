@@ -21,7 +21,7 @@ namespace DatabaseProjekt.Database
         //danner en liste af stierne til byerne.
         public string[] GetFilePaths()
         {
-            return Directory.GetFiles(@"E:\Skoleprojekter\testdata\testbooks");
+            return Directory.GetFiles(@"E:\Skoleprojekter\root");
         }
 
         //Henter alle engelske bynavne ind og lægger dem i en liste.
@@ -64,6 +64,9 @@ namespace DatabaseProjekt.Database
                 string author = FindAuthor(authorResults, bookPath);
                 string title = FindTitle(titleResults, bookPath);
 
+                if (author.Length <= 500 && title.Length <= 500 )
+                {
+
                 // tager 2 sekunder for 100 bøger
                 string bookText = File.ReadAllText(@bookPath);
 
@@ -80,6 +83,7 @@ namespace DatabaseProjekt.Database
                 var book = new Book() { BookId = bookId, Author = author, Title = title, Cities = citiesInBook };
                 listOfBooks.Add(book);
                 bookId++;
+                }
             }
            
             // Inserts the book into the MYSQL database
