@@ -35,7 +35,7 @@ namespace DatabaseProjekt.Database
                 {
                     var line = reader.ReadLine();
                     var values = line.Split(';');
-                    var city = new City() { Name = values[0], Latitude = Convert.ToDouble(values[1]), Longitude = Convert.ToDouble(values[2]), CityId = Convert.ToInt32(values[3]) };
+                    var city = new City() { Name = values[0], Latitude = float.Parse(values[1]), Longitude = float.Parse(values[2]), CityId = Convert.ToInt32(values[3]) };
                     listOfCities.Add(city);
                 }
                 return listOfCities;

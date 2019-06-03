@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 
@@ -29,7 +30,7 @@ namespace DatabaseProjekt.Database
                     {
                         RowsCity.Add(string.Format("('{0}','{1}')", book.BookId, city.CityId));
                     }
-                    
+
                 }
                 queryForBooks.append(string.Join(",", Rows));
                 queryForBooks.append(";");
@@ -52,11 +53,11 @@ namespace DatabaseProjekt.Database
         public void BulkCitiesToMySQL(List<City> cityList)
         {
             string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
-            StringBuilder queryForCities = new StringBuilder("INSERT INTO cities (id, name, latitude, longitude) VALUES ");
-          
+            StringBuilder queryForCities = new StringBuilder("INSERT INTO cities (id, nameofcity, latitude, longitude) VALUES ");
+
             using (MySqlConnection mConnection = new MySqlConnection(ConnectionString))
             {
-                List<string> Rows = new List<string>();            
+                List<string> Rows = new List<string>();
                 foreach (var city in cityList)
                 {
                     Rows.Add(string.Format("('{0}','{1}','{2}','{3}')", city.CityId, MySqlHelper.EscapeString(city.Name), city.Latitude, city.Longitude));
@@ -72,6 +73,149 @@ namespace DatabaseProjekt.Database
                 }
             }
         }
-        
+
+        public List<Book> GetAllBooks()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            var book = new Book();
+            var city = new City();
+            List<Book> bookList = new List<Book>();
+            List<City> cities = new List<City>();
+
+            string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
+            StringBuilder queryForAllBooks = new StringBuilder(
+                "SELECT books.id as bookid, cities.id as cityid, books.author, books.title, cities.nameofcity, cities.latitude, cities.longitude " +
+                "FROM books " +
+                "JOIN books_cities_mentions ON books.id = books_cities_mentions.book_id " +
+                "JOIN cities ON cities.id = books_cities_mentions.city_id");
+            bookList = PerformQueryReturnBooksList(queryForAllBooks, ConnectionString);
+
+            // Det tager 1.5 sekundt at hente daten ud.
+            sw.Stop();
+            TimeSpan elapsedTime = sw.Elapsed;
+            return bookList;
+        }
+
+        public List<Book> GetBooksByTitle(string bookTitle)
+        {
+            List<Book> bookList = new List<Book>();
+            string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
+            StringBuilder queryForAllBooks = new StringBuilder(
+                "SELECT books.id as bookid, cities.id as cityid, books.author, books.title, cities.nameofcity, cities.latitude, cities.longitude " +
+                "FROM books " +
+                "JOIN books_cities_mentions ON books.id = books_cities_mentions.book_id " +
+                "JOIN cities ON cities.id = books_cities_mentions.city_id " +
+                "Where books.title = " + "'"+bookTitle+"'");
+
+            bookList = PerformQueryReturnBooksList(queryForAllBooks, ConnectionString);
+            return bookList;
+        }
+
+        public List<Book> GetBooksByAuthor(string author)
+        {
+            List<Book> bookList = new List<Book>();
+            string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
+            StringBuilder queryForAllBooks = new StringBuilder(
+                "SELECT books.id as bookid, cities.id as cityid, books.author, books.title, cities.nameofcity, cities.latitude, cities.longitude " +
+                "FROM books " +
+                "JOIN books_cities_mentions ON books.id = books_cities_mentions.book_id " +
+                "JOIN cities ON cities.id = books_cities_mentions.city_id " +
+                "Where books.author = " + "'" + author + "'");
+
+            bookList = PerformQueryReturnBooksList(queryForAllBooks, ConnectionString);
+            return bookList;
+        }
+      
+        public List<Book> GetBooksByCity(string cityName)
+        {
+            List<Book> bookList = new List<Book>();
+            string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
+            StringBuilder queryForAllBooks = new StringBuilder(
+                "SELECT books.id as bookid, cities.id as cityid, books.author, books.title, cities.nameofcity, cities.latitude, cities.longitude " +
+                "FROM books " +
+                "JOIN books_cities_mentions ON books.id = books_cities_mentions.book_id " +
+                "JOIN cities ON cities.id = books_cities_mentions.city_id " +
+                "Where cities.nameofcity = " + "'" + cityName + "'");
+
+            bookList = PerformQueryReturnBooksList(queryForAllBooks, ConnectionString);
+            return bookList;
+        }
+        // "SELECT *, ( 3959 * acos( cos( radians(" . $lat. ") ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(" . $lng. ") ) + sin( radians(" . $lat. ") ) * sin( radians( lat ) ) ) ) AS distance FROM your_table HAVING distance < 5"
+
+        public List<Book> GetBooksXMilesFromGeolocation(float lat, float lng, int distance)
+        {
+            List<Book> bookList = new List<Book>();
+            string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
+            StringBuilder queryForAllBooks = new StringBuilder(
+                "SELECT books.id as bookid, cities.id as cityid, books.author, books.title, cities.nameofcity, cities.latitude, cities.longitude " +
+                ", ( 3959 * acos( cos( radians(" + lat + ") ) * cos( radians( cities.latitude ) ) * cos( radians( cities.longitude ) - radians(" + lng + ") ) + sin( radians("  + lat + ") ) * sin( radians( cities.latitude ) ) ) ) AS distance " +
+                "FROM books " +
+                "JOIN books_cities_mentions ON books.id = books_cities_mentions.book_id " +
+                "JOIN cities ON cities.id = books_cities_mentions.city_id HAVING distance < "+ distance
+                );
+
+            bookList = PerformQueryReturnBooksList(queryForAllBooks, ConnectionString);
+            return bookList;
+        }
+
+
+        public List<Book> PerformQueryReturnBooksList(StringBuilder qeury, string ConnectionString)
+        {
+            List<Book> bookList = new List<Book>();
+            List<City> cities = new List<City>();
+
+            using (MySqlConnection mConnection = new MySqlConnection(ConnectionString))
+            {
+                MySqlDataAdapter dataAdapter = new MySqlDataAdapter();
+                mConnection.Open();
+
+                using (dataAdapter.SelectCommand = new MySqlCommand(qeury.ToString(), mConnection))
+                {
+                    DataTable table = new DataTable();
+                    dataAdapter.Fill(table);
+
+                    foreach (DataRow Row in table.Rows)
+                    {
+                        if (bookList.Count == 0)
+                        {
+                            var city = new City();
+                            var book = new Book();
+                            book.BookId = Row.Field<int>("bookid");
+                            book.Author = Row.Field<string>("author");
+                            book.Title = Row.Field<string>("title");
+                            city.CityId = Row.Field<int>("cityid");
+                            city.Name = Row.Field<string>("nameofcity");
+                            city.Latitude = Row.Field<float>("latitude");
+                            city.Longitude = Row.Field<float>("longitude");
+                            cities.Add(city);
+                            book.Cities = cities;
+                            bookList.Add(book);
+                        }
+                        else if ((bookList[bookList.Count - 1].BookId == Row.Field<int>("bookid") && bookList.Count != 0))
+                        {
+                            var city = new City();
+                            city.CityId = Row.Field<int>("cityid");
+                            city.Name = Row.Field<string>("nameofcity");
+                            city.Latitude = Row.Field<float>("latitude");
+                            city.Longitude = Row.Field<float>("longitude");
+                            cities.Add(city);
+                        }
+                        else
+                        {
+                            var book = new Book();
+                            book.BookId = Row.Field<int>("bookid");
+                            book.Author = Row.Field<string>("author");
+                            book.Title = Row.Field<string>("title");
+                            book.Cities = cities;
+                            bookList.Add(book);
+                        }
+
+                    }
+                }
+            }
+            return bookList;
+        }
     }
 }
