@@ -12,7 +12,7 @@ I had to remove the The Project Gutenberg Etext of Chromosome 12, by the Human G
 
 ## The MYSQL database structure
 There is a many to many relation between the book and the cities. Therefore I've created 3 tables. One table for books, and one table for cities and then a table with book_id's and city_id's. That way I can join them to retrieve the info I want
-![alt text]https://i.gyazo.com/87c9676546eed94eb5bcf0d64f42a573.png
+![alt text](https://i.gyazo.com/87c9676546eed94eb5bcf0d64f42a573.png)
 
 How data is modeled in your application.
 How the data is imported.
