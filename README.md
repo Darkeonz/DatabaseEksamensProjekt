@@ -50,6 +50,10 @@ For the cities, I split each book into sentences and put them into a list. I the
 
 The reason I compare the cities with the books first before using Stanford Named Entity Recognizer (NER) framework, is because it is a very heavy task. So instead of going through thousands of sentences, I only have to go through those sentences with words matching the city list.
 
+## DatabaseProjekt.test / UnitTest1.cs
+
+I used tests for analysing how I could optimize the speed of harvesting the books.
+
 ## How the data is imported.
 
 The MYSQL queries are performed through the DBHandlerMYSQL.cs and DBHandlerMongo.cs classes. I used a stringbuilder to build a query for inserting all the books and cities into the MYSQL database in one batch. This is to avoid connecting to the database multiple times and optimizing the time it takes to insert the elements into the database.
@@ -63,6 +67,8 @@ Whenever I need some data, I take all columns that match with what a Book object
 
 
 ## Performing a test of the runtime of the 20 queries.
+
+I did not manage to create a UI, so I've run the queries through debugging.
 
 As seen below. It takes 11 sec to run through all 20 queries and return a list of books for each one.
 
