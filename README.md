@@ -1,12 +1,18 @@
 # DatabaseEksamensProjekt
 
-## Stanford Named Entity Recognizer (NER) for .NET
 
-1) You need to download the stanford NLP project from https://sergey-tihon.github.io/Stanford.NLP.NET/StanfordNER.html
-2) Make sure the path of the unzipped file is C:\Temp\
-3) C:\Temp\stanford-ner-2016-10-31\classifiers\english.all.3class.distsim.crf.ser.gz
+## Harvesting books from the Gutenberg Project and inserting them into MYSQL and MongoDb databases.
+1) Download the stanford NLP project from https://sergey-tihon.github.io/Stanford.NLP.NET/StanfordNER.html
+2) Make sure the path of the unzipped file is C:\Temp\ (as that is where the relation is pointing in the code)
+3) Path should look as such. C:\Temp\stanford-ner-2016-10-31\classifiers\english.all.3class.distsim.crf.ser.gz
 
 I had to remove the The Project Gutenberg Etext of Chromosome 12, by the Human Genome Project. It had only DNA code and the file was 146 mb, all which my methods were trying to clean up.
+
+4) The method HarvestDataFromBooks() from the class ReadAndInsert.cs is harvesting all the books for author, title, and English cities and inserting it into the databases.
+
+It takes about 3 hours and 15 minutes to harvest all the books and insert them into the databases. This is optimized through the use of plinq/threads as well as making sure only upper case possible city names are checked.
+
+![alt text](https://i.gyazo.com/67d69dbc39ef06e897dbc200a4860eae.png)
 
 ## The Databases used are MYSQL and MongoDB
 
