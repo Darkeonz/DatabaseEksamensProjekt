@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using DatabaseProjekt.Entities;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +20,10 @@ namespace DatabaseProjekt.Database
         }
 
         public void InsertRecord<t>(string table, t record)
-        {
-            var collection = db.GetCollection<t>(table);
-            collection.InsertOne(record);
+        {  
+                var collection = db.GetCollection<t>(table);
+                collection.InsertOne(record);
+
         }
     }
 }

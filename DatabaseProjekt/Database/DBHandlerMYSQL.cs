@@ -79,20 +79,19 @@ namespace DatabaseProjekt.Database
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            var book = new Book();
             var city = new City();
             List<Book> bookList = new List<Book>();
             List<City> cities = new List<City>();
 
             string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
-            StringBuilder queryForAllBooks = new StringBuilder(
+            StringBuilder query = new StringBuilder(
                 "SELECT books.id as bookid, cities.id as cityid, books.author, books.title, cities.nameofcity, cities.latitude, cities.longitude " +
                 "FROM books " +
                 "JOIN books_cities_mentions ON books.id = books_cities_mentions.book_id " +
-                "JOIN cities ON cities.id = books_cities_mentions.city_id");
-            bookList = PerformQueryReturnBooksList(queryForAllBooks, ConnectionString);
+                "JOIN cities ON cities.id = books_cities_mentions.city_id ");
 
-            // Det tager 1.5 sekundt at hente daten ud.
+            bookList = PerformQueryReturnBooksList(query, ConnectionString);
+
             sw.Stop();
             TimeSpan elapsedTime = sw.Elapsed;
             return bookList;
@@ -102,14 +101,14 @@ namespace DatabaseProjekt.Database
         {
             List<Book> bookList = new List<Book>();
             string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
-            StringBuilder queryForAllBooks = new StringBuilder(
+            StringBuilder query = new StringBuilder(
                 "SELECT books.id as bookid, cities.id as cityid, books.author, books.title, cities.nameofcity, cities.latitude, cities.longitude " +
                 "FROM books " +
                 "JOIN books_cities_mentions ON books.id = books_cities_mentions.book_id " +
                 "JOIN cities ON cities.id = books_cities_mentions.city_id " +
-                "Where books.title = " + "'"+bookTitle+"'");
+                "Where books.title = " + "'" + bookTitle + "'");
 
-            bookList = PerformQueryReturnBooksList(queryForAllBooks, ConnectionString);
+            bookList = PerformQueryReturnBooksList(query, ConnectionString);
             return bookList;
         }
 
@@ -117,17 +116,17 @@ namespace DatabaseProjekt.Database
         {
             List<Book> bookList = new List<Book>();
             string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
-            StringBuilder queryForAllBooks = new StringBuilder(
+            StringBuilder query = new StringBuilder(
                 "SELECT books.id as bookid, cities.id as cityid, books.author, books.title, cities.nameofcity, cities.latitude, cities.longitude " +
                 "FROM books " +
                 "JOIN books_cities_mentions ON books.id = books_cities_mentions.book_id " +
                 "JOIN cities ON cities.id = books_cities_mentions.city_id " +
                 "Where books.author = " + "'" + author + "'");
 
-            bookList = PerformQueryReturnBooksList(queryForAllBooks, ConnectionString);
+            bookList = PerformQueryReturnBooksList(query, ConnectionString);
             return bookList;
         }
-      
+
         public List<Book> GetBooksByCity(string cityName)
         {
             List<Book> bookList = new List<Book>();
@@ -148,15 +147,15 @@ namespace DatabaseProjekt.Database
         {
             List<Book> bookList = new List<Book>();
             string ConnectionString = "Server=127.0.0.1;Database=gutenberg;Uid=root;Pwd=Rallermus1;";
-            StringBuilder queryForAllBooks = new StringBuilder(
+            StringBuilder query = new StringBuilder(
                 "SELECT books.id as bookid, cities.id as cityid, books.author, books.title, cities.nameofcity, cities.latitude, cities.longitude " +
-                ", ( 3959 * acos( cos( radians(" + lat + ") ) * cos( radians( cities.latitude ) ) * cos( radians( cities.longitude ) - radians(" + lng + ") ) + sin( radians("  + lat + ") ) * sin( radians( cities.latitude ) ) ) ) AS distance " +
+                ", ( 3959 * acos( cos( radians(" + lat + ") ) * cos( radians( cities.latitude ) ) * cos( radians( cities.longitude ) - radians(" + lng + ") ) + sin( radians(" + lat + ") ) * sin( radians( cities.latitude ) ) ) ) AS distance " +
                 "FROM books " +
                 "JOIN books_cities_mentions ON books.id = books_cities_mentions.book_id " +
-                "JOIN cities ON cities.id = books_cities_mentions.city_id HAVING distance < "+ distance
+                "JOIN cities ON cities.id = books_cities_mentions.city_id HAVING distance < " + distance
                 );
 
-            bookList = PerformQueryReturnBooksList(queryForAllBooks, ConnectionString);
+            bookList = PerformQueryReturnBooksList(query, ConnectionString);
             return bookList;
         }
 
@@ -181,10 +180,12 @@ namespace DatabaseProjekt.Database
                         if (bookList.Count == 0)
                         {
                             var city = new City();
-                            var book = new Book();
-                            book.BookId = Row.Field<int>("bookid");
-                            book.Author = Row.Field<string>("author");
-                            book.Title = Row.Field<string>("title");
+                            var book = new Book()
+                            {
+                                BookId = Row.Field<int>("bookid"),
+                                Author = Row.Field<string>("author"),
+                                Title = Row.Field<string>("title")
+                            };
                             city.CityId = Row.Field<int>("cityid");
                             city.Name = Row.Field<string>("nameofcity");
                             city.Latitude = Row.Field<float>("latitude");
@@ -195,20 +196,24 @@ namespace DatabaseProjekt.Database
                         }
                         else if ((bookList[bookList.Count - 1].BookId == Row.Field<int>("bookid") && bookList.Count != 0))
                         {
-                            var city = new City();
-                            city.CityId = Row.Field<int>("cityid");
-                            city.Name = Row.Field<string>("nameofcity");
-                            city.Latitude = Row.Field<float>("latitude");
-                            city.Longitude = Row.Field<float>("longitude");
+                            var city = new City()
+                            {
+                                CityId = Row.Field<int>("cityid"),
+                                Name = Row.Field<string>("nameofcity"),
+                                Latitude = Row.Field<float>("latitude"),
+                                Longitude = Row.Field<float>("longitude")
+                            };
                             cities.Add(city);
                         }
                         else
                         {
-                            var book = new Book();
-                            book.BookId = Row.Field<int>("bookid");
-                            book.Author = Row.Field<string>("author");
-                            book.Title = Row.Field<string>("title");
-                            book.Cities = cities;
+                            var book = new Book()
+                            {
+                                BookId = Row.Field<int>("bookid"),
+                                Author = Row.Field<string>("author"),
+                                Title = Row.Field<string>("title"),
+                                Cities = cities
+                            };
                             bookList.Add(book);
                         }
 

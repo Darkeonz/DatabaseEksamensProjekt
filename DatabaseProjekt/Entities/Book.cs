@@ -9,6 +9,7 @@ namespace DatabaseProjekt.Entities
     public class Book
     {
         [BsonId]
+        public Guid BookMongoId { get; set; }
         public int? BookId { get; set; }
         public string Title { get; set; }
 

@@ -7,8 +7,7 @@ using System.Web;
 namespace DatabaseProjekt.Entities
 {
     public class City
-    {
-        [BsonId] 
+    {     
         public int? CityId { get; set; }
         public string Name { get; set; }
 
