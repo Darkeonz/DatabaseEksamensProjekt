@@ -28,7 +28,7 @@ The MongoDb saves the data directly into the nosql collection through a list of 
 
 ## How the data is modeled in my application.
 
-The model consists two simple entities. A book that has an GUID id for MongoDb, an actualy BookId, an Author, A Title, and a List of objects of City. A city consits of a CityId, Name, Latitude, Longitude.
+The model consists two simple entities. A book that has an GUID id for MongoDb, a BookId, an Author, A Title, and a List of objects of City. A city consists of a CityId, Name, Latitude, Longitude.
 
 ![alt text](https://i.gyazo.com/6bd2b698ef2b27721f0febb3605037b6.png)
 
@@ -53,4 +53,4 @@ As seen below. It takes 11 sec to run through all 20 queries and return a list o
 
 ## Which Database is better for a project like this?
 
-The MongoDb takes up a lot more space. Especially when you have several layers with arrays. For me it simply started swallowing my harddisk space when I inserted the data. There is a chance I am not storing the data correct. While MongoDb is known for being faster as it focuses less on the effeciency of saving data, but rather the processing speed, I feel like it won't matter for the end user in this type of project. The insertion into the mysql database took about 2 sec, and each query takes about 0.5 sec. I would pick the MYSQL database 
+The MongoDb takes up a lot more space. Especially when you have several layers with arrays. For me it simply started swallowing my harddisk space when I inserted the data. There is a chance I am not storing the data correct. While MongoDb is known for being faster as it focuses less on the effeciency of saving data, but rather the processing speed, I feel like it won't matter for the end user in this type of project. The insertion into the mysql database took about 2 sec, and each query takes about 0.5 sec. I would pick the MYSQL database for this type of project.
