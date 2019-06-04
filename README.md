@@ -40,9 +40,20 @@ The model consists two simple entities. A book that has an GUID id for MongoDb, 
 
 ![alt text](https://i.gyazo.com/9ead3133b102562d734542dfe9b7ecbb.png)
 
+## How are the books harvested according to the specifications?
+
+I use a lambda expression to find the first line that includes the string 'author:' and then return the following word. From looking through the documentation I read that all the books have the same header. This makes it a realiable way to retrieve the author. I did the exact same for title.
+
+![alt text](https://i.gyazo.com/6661153f1f6e61e4ae8fd93d7e56e202.png)
+
+For the cities, I split each book into sentences and put them into a list. I then took the sentences in that list and looked through my list of English towns to see if there would be a match. The list of results I took and used the Stanford Named Entity Recognizer (NER) framework with, to determine which upper case words were locations. Afterwards I split each of the result sentences into words and started adding them to my data structure. I always checked if the next word would be a location as well, as that would indicate that it is a multiple worded city such as (Great Spire) ect. I then took that list of words and again checked with the list of English towns to determine which cities exist in the texts.
+
+The reason I compare the cities with the books first before using Stanford Named Entity Recognizer (NER) framework, is because it is a very heavy task. So instead of going through thousands of sentences, I only have to go through those sentences with words matching the city list.
+
 ## How the data is imported.
 
-The MYSQL queries are performed through the DBHandlerMYSQL.cs class. I used a stringbuilder to build a query for inserting all the books and cities into the MYSQL database in one batch. This is to avoid connecting to the database multiple times and optimizing the time it takes to insert the elements into the database. 
+The MYSQL queries are performed through the DBHandlerMYSQL.cs and DBHandlerMongo.cs classes. I used a stringbuilder to build a query for inserting all the books and cities into the MYSQL database in one batch. This is to avoid connecting to the database multiple times and optimizing the time it takes to insert the elements into the database.
+ 
 
 For selecting the data, I've created a method called PerformQueryReturnBooksList(), that performs a given query and then map the result with an object of the Book entity, and put it in a list of books and returns it. This is to prevent redundant connection code to the database and mapping.
 
