@@ -1,5 +1,11 @@
 # DatabaseEksamensProjekt
 
+# Classes in project to pay attention to
+ReadAndInsert.cs (Harvests all the txt books and inserts them into databases)
+DBHandlerMYSQL.cs (Handles the connections to the MYSQL database)
+DBHandlerMongo.cs (Handles the connections to the MongoDb database)
+Book.cs (Entity)
+City.cs (Entity)
 
 ## Harvesting books from the Gutenberg Project and inserting them into MYSQL and MongoDb databases.
 1) Download the stanford NLP project from https://sergey-tihon.github.io/Stanford.NLP.NET/StanfordNER.html
