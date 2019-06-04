@@ -51,4 +51,6 @@ As seen below. It takes 11 sec to run through all 20 queries and return a list o
 
 ![alt text](https://i.gyazo.com/8025f846e0802cce5ec288a6e091f695.png)
 
+## Which Database is better for a project like this?
 
+The MongoDb takes up a lot more space. Especially when you have several layers with arrays. For me it simply started swallowing my harddisk space when I inserted the data. There is a chance I am not storing the data correct. While MongoDb is known for being faster as it focuses less on the effeciency of saving data, but rather the processing speed, I feel like it won't matter for the end user in this type of project. The insertion into the mysql database took about 2 sec, and each query takes about 0.5 sec. I would pick the MYSQL database 
