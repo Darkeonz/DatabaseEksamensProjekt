@@ -10,7 +10,7 @@ I had to remove the The Project Gutenberg Etext of Chromosome 12, by the Human G
 
 4) The method HarvestDataFromBooks() from the class ReadAndInsert.cs is harvesting all the books for author, title, and English cities and inserting it into the databases.
 
-It takes about 3 hours and 15 minutes to harvest all the books and insert them into the databases. This is optimized through the use of plinq/threads as well as making sure only upper case possible city names are checked.
+It takes about 3 hours and 15 minutes to harvest all the books and insert them into the databases. This is optimized through the use of plinq/threads as well as making sure only upper case possible city names are checked. A lot of checks are in place to make sure the data is in correct format.
 
 ![alt text](https://i.gyazo.com/67d69dbc39ef06e897dbc200a4860eae.png)
 
@@ -20,16 +20,35 @@ It takes about 3 hours and 15 minutes to harvest all the books and insert them i
 There is a many to many relation between the book and the cities. Therefore I've created 3 tables. One table for books, and one table for cities and then a table with book_id's and city_id's. That way I can join them to retrieve the info I want
 ![alt text](https://i.gyazo.com/87c9676546eed94eb5bcf0d64f42a573.png)
 
-How data is modeled in your application.
-How the data is imported.
-Behavior of query test set. Including a discussion on how much of the query runtime is influenced by the DB and what is influenced by the application frontend.
-Your recommendation, for which database to use in such a project for production.
+## The MongoDb database structure
+
+The MongoDb saves the data directly into the nosql collection through a list of books, which each includes a list of cities as an array.
+
+![alt text](https://i.gyazo.com/34a447e582c03b23bd4910a7ea3ecf14.png)
+
+## How the data is modeled in my application.
+
+The model consists two simple entities. A book that has an GUID id for MongoDb, an actualy BookId, an Author, A Title, and a List of objects of City. A city consits of a CityId, Name, Latitude, Longitude.
+
+![alt text](https://i.gyazo.com/6bd2b698ef2b27721f0febb3605037b6.png)
+
+![alt text](https://i.gyazo.com/9ead3133b102562d734542dfe9b7ecbb.png)
+
+## How the data is imported.
+
+The MYSQL queries are performed through the DBHandlerMYSQL.cs class. I used a stringbuilder to build a query for inserting all the books and cities into the MYSQL database in one batch. This is to avoid connecting to the database multiple times and optimizing the time it takes to insert the elements into the database. 
+
+For selecting the data, I've created a method called PerformQueryReturnBooksList(), that performs a given query and then map the result with an object of the Book entity, and put it in a list of books and returns it. This is to prevent redundant connection code to the database and mapping.
+
+I've created a method for each of the queries, whith the main purpose of creating the query strings.
+
+Whenever I need some data, I take all columns that match with what a Book object is in the code. This is to keep a simple design where the data can be accessed through objects.
 
 
-It took 3 hours and 14 minutes to harvest all the books and insert them into the databases.
+## Performing a test of the runtime of the 20 queries.
 
-![alt text](https://i.gyazo.com/67d69dbc39ef06e897dbc200a4860eae.png)
+As seen below. It takes 11 sec to run through all 20 queries and return a list of books for each one.
 
-Haversine formula for calculating distance
+![alt text](https://i.gyazo.com/8025f846e0802cce5ec288a6e091f695.png)
 
-![alt text](https://i.gyazo.com/fe5cc61ee470af2c55fdcae9f9d60db9.png)
+
