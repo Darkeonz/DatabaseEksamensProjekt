@@ -42,6 +42,8 @@ The model consists two simple entities. A book that has an GUID id for MongoDb, 
 
 ## How are the books harvested according to the specifications?
 
+This is done in the ReadAndInsert.cs class through the HarvestDataFromBooks()
+
 I use a lambda expression to find the first line that includes the string 'author:' and then return the following word. From looking through the documentation I read that all the books have the same header. This makes it a realiable way to retrieve the author. I did the exact same for title.
 
 ![alt text](https://i.gyazo.com/6661153f1f6e61e4ae8fd93d7e56e202.png)
